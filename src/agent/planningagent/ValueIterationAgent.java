@@ -1,13 +1,8 @@
 package agent.planningagent;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 import util.HashMapUtil;
-
-import java.util.HashMap;
 
 import environnement.Action;
 import environnement.Etat;
@@ -47,13 +42,9 @@ public class ValueIterationAgent extends PlanningValueAgent{
 			V.put(etat, 0.0);
 		}
 	}
-	
-	
-	
-	
+
 	public ValueIterationAgent(MDP mdp) {
 		this(0.9,mdp);
-
 	}
 	
 	/**
@@ -69,9 +60,41 @@ public class ValueIterationAgent extends PlanningValueAgent{
 		//lorsque delta < epsilon 
 		//Dans cette classe, il  faut juste mettre a jour delta 
 		this.delta=0.0;
-		//*** VOTRE CODE
-		
-		
+		List<Action> listAction;
+		Map<Etat, Double> listTransition;
+		Etat etat, etatSuivant;
+		Double value, valueTmp = null, proba, oldValue, deltaTmp;
+
+		Iterator<Map.Entry<Etat, Double>> it = this.V.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry<Etat, Double> pair = it.next();
+			etat = pair.getKey();
+			value = pair.getValue();
+			listAction = this.mdp.getActionsPossibles(etat);
+
+			for(Action action : listAction) {
+				try {
+					listTransition = this.mdp.getEtatTransitionProba(etat, action);
+					Iterator<Map.Entry<Etat, Double>> itt = listTransition.entrySet().iterator();
+					valueTmp = 0.0;
+					while (itt.hasNext()) {
+						Map.Entry<Etat, Double> pairr = itt.next();
+						etatSuivant = pairr.getKey();
+						proba = pairr.getValue();
+						valueTmp += proba * (this.mdp.getRecompense(etat, action, etatSuivant) + gamma*this.V.get(etatSuivant));
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				if(valueTmp > value) {
+					oldValue = value;
+					value = valueTmp;
+					deltaTmp = value - oldValue;
+					if(deltaTmp > delta) delta = deltaTmp;
+				}
+			}
+		}
+
 		//mise a jour de vmax et vmin utilise pour affichage du gradient de couleur:
 		//vmax est la valeur max de V pour tout s 
 		//vmin est la valeur min de V pour tout s
@@ -88,18 +111,16 @@ public class ValueIterationAgent extends PlanningValueAgent{
 	 */
 	@Override
 	public Action getAction(Etat e) {
-		//*** VOTRE CODE
+		//TODO
 		
 		return Action2D.NONE;
-		
 	}
-
 
 	@Override
 	public double getValeur(Etat _e) {
                  //Renvoie la valeur de l'Etat _e, c'est juste un getter, ne calcule pas la valeur ici
                  //(la valeur est calculee dans updateV
-		//*** VOTRE CODE
+		//TODO
 		
 		return 0.0;
 	}
@@ -109,28 +130,23 @@ public class ValueIterationAgent extends PlanningValueAgent{
 	 */
 	@Override
 	public List<Action> getPolitique(Etat _e) {
-		//*** VOTRE CODE
+		//TODO
 		
 		// retourne action de meilleure valeur dans _e selon V, 
 		// retourne liste vide si aucune action legale (etat absorbant)
 		List<Action> returnactions = new ArrayList<Action>();
 	
 		return returnactions;
-		
 	}
 	
 	@Override
 	public void reset() {
 		super.reset();
                 //reinitialise les valeurs de V 
-		//*** VOTRE CODE
+		//TODO
 		
 		this.notifyObs();
 	}
-
-	
-
-	
 
 	public HashMap<Etat,Double> getV() {
 		return V;
@@ -144,9 +160,4 @@ public class ValueIterationAgent extends PlanningValueAgent{
 		this.gamma = _g;
 	}
 
-
-	
-	
-
-	
 }

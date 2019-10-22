@@ -62,10 +62,7 @@ public class EnvironnementPacmanFeatureRL extends EnvironnementPacmanRL {
 	@Override
 	public void setEtatCourant(Etat e) {
 		etatcourant = (StateGamePacman) e;
-		
 	}
-
-
 
 	@Override
 	public Etat doAction(Action _a) {

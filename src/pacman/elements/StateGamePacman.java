@@ -6,8 +6,6 @@ import java.util.List;
 import environnement.Etat;
 import javafx.util.Pair;
 
-
-
 /**
  * Cette classe decrit un etat complet du jeu pacman (non modifiable)
  *  et  implemente les regles du jeu (agents bougent, mise a jour labyrinthe, scarred, score, ...).

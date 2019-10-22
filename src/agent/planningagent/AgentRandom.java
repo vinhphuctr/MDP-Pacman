@@ -12,8 +12,7 @@ import environnement.MDP;
  *
  */
 public class AgentRandom extends PlanningValueAgent{
-	
-	
+
 	public AgentRandom(MDP _m) {
 		super(_m);
 	}
@@ -27,14 +26,10 @@ public class AgentRandom extends PlanningValueAgent{
 		return actions.get(r);
 	}
 
-	
-	
 	@Override
 	public double getValeur(Etat _e) {
 		return 0.0;
 	}
-
-	
 
 	@Override
 	public List<Action> getPolitique(Etat _e) {
@@ -51,9 +46,5 @@ public class AgentRandom extends PlanningValueAgent{
 		// TODO Auto-generated method stub
 		
 	}
-
-
-
-
 
 }

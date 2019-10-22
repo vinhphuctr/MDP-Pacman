@@ -20,14 +20,14 @@ public class QLApproxAgent extends QLearningAgent{
 	
 	public QLApproxAgent(double alpha, double gamma, Environnement _env,FeatureFunction _featurefunction) {
 		super(alpha, gamma, _env);
-		//*** VOTRE CODE
+		//TODO
 		
 	}
 
 	
 	@Override
 	public double getQValeur(Etat e, Action a) {
-		//*** VOTRE CODE
+		//TODO
 		return 0.0;
 
 	}
@@ -43,7 +43,7 @@ public class QLApproxAgent extends QLearningAgent{
        //inutile de verifier si e etat absorbant car dans runEpisode et threadepisode 
 		//arrete episode lq etat courant absorbant	
 		
-		//*** VOTRE CODE
+		//TODO
 		
 		
 	}
@@ -53,7 +53,7 @@ public class QLApproxAgent extends QLearningAgent{
 		super.reset();
 		this.qvaleurs.clear();
 	
-		//*** VOTRE CODE
+		//TODO
 		
 		this.episodeNb =0;
 		this.notifyObs();

@@ -45,7 +45,7 @@ public class FeatureFunctionPacman implements FeatureFunction{
 	
 		StateAgentPacman pacmanstate_next= stategamepacman.movePacmanSimu(0, new ActionPacman(a.ordinal()));
 		 
-		//*** VOTRE CODE
+		//TODO
 		
 		
 		

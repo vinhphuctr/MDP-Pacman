@@ -17,21 +17,21 @@ import javafx.util.Pair;
  *
  */
 public class FeatureFunctionIdentity implements FeatureFunction {
-	//*** VOTRE CODE
+	//TODO
 	
 	public FeatureFunctionIdentity(int _nbEtat, int _nbAction){
-		//*** VOTRE CODE
+		//TODO
 	}
 	
 	@Override
 	public int getFeatureNb() {
-		//*** VOTRE CODE
+		//TODO
 		return 0;
 	}
 
 	@Override
 	public double[] getFeatures(Etat e,Action a){
-		//*** VOTRE CODE
+		//TODO
 		
 		return null;
 	}
