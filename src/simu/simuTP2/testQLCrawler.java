@@ -21,58 +21,58 @@ import vueCrawler.VueCrawlerManuel;
 import vueCrawler.VueCrawlerRL;
 import vueGridworld.VueGridworldRL;
 
-public class testQLCrawler  extends Application{
-	static Environnement g ;
-	static RLAgent a;
+public class testQLCrawler extends Application {
+    static Environnement g;
+    static RLAgent a;
 
-	
-	private static void createQLAgentCrawler(){
-		double gamma=0.9;
-		double alpha=0.1;
-		int nbEtatBras=4;
-		int nbEtatMain=6;
-		
-		g = new CrawlingRobotEnvironnement(nbEtatBras,nbEtatMain);
-		
-		 a = new QLearningAgent(alpha,gamma,g);
-		
-		a.setStratExplorationGreedy(0.1);//sinon strat exploration par defaut est manuelle
-		
-		a.setMaxnbpasparepisode(100);
-		a.DISPEPISODE=true;
-		a.DISPRL = false;
-		a.DISPTHREAD=false;
-		VueCrawlerAbstrait vue = new VueCrawlerRL((CrawlingRobotEnvironnement) g,a);
-		vue.setVisible(true);
 
-	}
-	
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args)   {
-			SwingUtilities.invokeLater(new Runnable(){
-				public void run(){		
-					createQLAgentCrawler();
-					
-				}
-			});
-		  launch( args);//lance start
-			
-	}
+    private static void createQLAgentCrawler() {
+        double gamma = 0.9;
+        double alpha = 0.1;
+        int nbEtatBras = 4;
+        int nbEtatMain = 6;
 
-	@Override
-	public void start(Stage primaryStage) throws Exception {
+        g = new CrawlingRobotEnvironnement(nbEtatBras, nbEtatMain);
+
+        a = new QLearningAgent(alpha, gamma, g);
+
+        a.setStratExplorationGreedy(0.1);//sinon strat exploration par defaut est manuelle
+
+        a.setMaxnbpasparepisode(100);
+        a.DISPEPISODE = true;
+        a.DISPRL = false;
+        a.DISPTHREAD = false;
+        VueCrawlerAbstrait vue = new VueCrawlerRL((CrawlingRobotEnvironnement) g, a);
+        vue.setVisible(true);
+
+    }
+
+    /**
+     * @param args
+     */
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                createQLAgentCrawler();
+
+            }
+        });
+        launch(args);//lance start
+
+    }
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
         //Creates lineChart dans scene 
-		primaryStage.setTitle(this.getClass().getName());
+        primaryStage.setTitle(this.getClass().getName());
 
-		IndicateurSumRwdPerEpisodeOnline lineChart = new IndicateurSumRwdPerEpisodeOnline(new NumberAxis(),new NumberAxis(),a);
-		 //Creates a Scene for a specific root Node=lineChart with a specific size and fill.
-        Scene scene  = new Scene(lineChart,800,600);
-       // lineChart.getData().add(series);
-       
+        IndicateurSumRwdPerEpisodeOnline lineChart = new IndicateurSumRwdPerEpisodeOnline(new NumberAxis(), new NumberAxis(), a);
+        //Creates a Scene for a specific root Node=lineChart with a specific size and fill.
+        Scene scene = new Scene(lineChart, 800, 600);
+        // lineChart.getData().add(series);
+
         primaryStage.setScene(scene);
-		primaryStage.show();
-		
-	}
+        primaryStage.show();
+
+    }
 }

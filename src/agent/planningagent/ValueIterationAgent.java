@@ -12,152 +12,146 @@ import environnement.Action2D;
 
 
 /**
- * Cet agent met a jour sa fonction de valeur avec value iteration 
+ * Cet agent met a jour sa fonction de valeur avec value iteration
  * et choisit ses actions selon la politique calculee.
- * @author laetitiamatignon
  *
+ * @author laetitiamatignon
  */
-public class ValueIterationAgent extends PlanningValueAgent{
-	/**
-	 * discount facteur
-	 */
-	protected double gamma;
+public class ValueIterationAgent extends PlanningValueAgent {
+    /**
+     * discount facteur
+     */
+    protected double gamma;
 
-	/**
-	 * fonction de valeur des etats
-	 */
-	protected HashMap<Etat,Double> V;
-	
-	/**
-	 * 
-	 * @param gamma
-	 * @param mdp
-	 */
-	public ValueIterationAgent(double gamma,  MDP mdp) {
-		super(mdp);
-		this.gamma = gamma;
-		
-		this.V = new HashMap<Etat,Double>();
-		for (Etat etat:this.mdp.getEtatsAccessibles()){
-			V.put(etat, 0.0);
-		}
-	}
+    /**
+     * fonction de valeur des etats
+     */
+    protected HashMap<Etat, Double> V;
 
-	public ValueIterationAgent(MDP mdp) {
-		this(0.9,mdp);
-	}
-	
-	/**
-	 * 
-	 * Mise a jour de V: effectue UNE iteration de value iteration (calcule V_k(s) en fonction de V_{k-1}(s'))
-	 * et notifie ses observateurs.
-	 * Ce n'est pas la version inplace (qui utilise la nouvelle valeur de V pour mettre a jour ...)
-	 */
-	@Override
-	public void updateV(){
-		//delta est utilise pour detecter la convergence de l'algorithme
-		//Dans la classe mere, lorsque l'on planifie jusqu'a convergence, on arrete les iterations        
-		//lorsque delta < epsilon 
-		//Dans cette classe, il  faut juste mettre a jour delta 
-		this.delta=0.0;
-		List<Action> listAction;
-		Map<Etat, Double> listTransition;
-		Etat etat, etatSuivant;
-		Double value, valueTmp = null, proba, oldValue, deltaTmp;
+    /**
+     * @param gamma
+     * @param mdp
+     */
+    public ValueIterationAgent(double gamma, MDP mdp) {
+        super(mdp);
+        this.gamma = gamma;
 
-		Iterator<Map.Entry<Etat, Double>> it = this.V.entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry<Etat, Double> pair = it.next();
-			etat = pair.getKey();
-			value = pair.getValue();
-			listAction = this.mdp.getActionsPossibles(etat);
+        this.V = new HashMap<Etat, Double>();
+        for (Etat etat : this.mdp.getEtatsAccessibles()) {
+            V.put(etat, 0.0);
+        }
+    }
 
-			for(Action action : listAction) {
-				try {
-					listTransition = this.mdp.getEtatTransitionProba(etat, action);
-					Iterator<Map.Entry<Etat, Double>> itt = listTransition.entrySet().iterator();
-					valueTmp = 0.0;
-					while (itt.hasNext()) {
-						Map.Entry<Etat, Double> pairr = itt.next();
-						etatSuivant = pairr.getKey();
-						proba = pairr.getValue();
-						valueTmp += proba * (this.mdp.getRecompense(etat, action, etatSuivant) + gamma*this.V.get(etatSuivant));
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				if(valueTmp > value) {
-					oldValue = value;
-					value = valueTmp;
-					deltaTmp = value - oldValue;
-					if(deltaTmp > delta) delta = deltaTmp;
-				}
-			}
-		}
+    public ValueIterationAgent(MDP mdp) {
+        this(0.9, mdp);
+    }
 
-		//mise a jour de vmax et vmin utilise pour affichage du gradient de couleur:
-		//vmax est la valeur max de V pour tout s 
-		//vmin est la valeur min de V pour tout s
-		// ...
-		
-		//******************* laisser cette notification a la fin de la methode	
-		this.notifyObs();
-	}
-	
-	
-	/**
-	 * renvoi l'action executee par l'agent dans l'etat e 
-	 * Si aucune actions possibles, renvoi Action2D.NONE
-	 */
-	@Override
-	public Action getAction(Etat e) {
-		//TODO
-		
-		return Action2D.NONE;
-	}
+    /**
+     * Mise a jour de V: effectue UNE iteration de value iteration (calcule V_k(s) en fonction de V_{k-1}(s'))
+     * et notifie ses observateurs.
+     * Ce n'est pas la version inplace (qui utilise la nouvelle valeur de V pour mettre a jour ...)
+     */
+    @Override
+    public void updateV() {
+        //delta est utilise pour detecter la convergence de l'algorithme
+        //Dans la classe mere, lorsque l'on planifie jusqu'a convergence, on arrete les iterations
+        //lorsque delta < epsilon
+        //Dans cette classe, il  faut juste mettre a jour delta
+        this.delta = 0.0;
+        List<Action> listAction;
+        Map<Etat, Double> listTransition;
+        Etat etat, etatSuivant;
+        Double value, valueTmp, proba, oldValue, deltaTmp;
 
-	@Override
-	public double getValeur(Etat _e) {
-                 //Renvoie la valeur de l'Etat _e, c'est juste un getter, ne calcule pas la valeur ici
-                 //(la valeur est calculee dans updateV
-		//TODO
-		
-		return 0.0;
-	}
-	/**
-	 * renvoi action(s) de plus forte(s) valeur(s) dans etat 
-	 * (plusieurs actions sont renvoyees si valeurs identiques, liste vide si aucune action n'est possible)
-	 */
-	@Override
-	public List<Action> getPolitique(Etat _e) {
-		//TODO
-		
-		// retourne action de meilleure valeur dans _e selon V, 
-		// retourne liste vide si aucune action legale (etat absorbant)
-		List<Action> returnactions = new ArrayList<Action>();
-	
-		return returnactions;
-	}
-	
-	@Override
-	public void reset() {
-		super.reset();
-                //reinitialise les valeurs de V 
-		//TODO
-		
-		this.notifyObs();
-	}
+        for (Map.Entry<Etat, Double> pair : this.V.entrySet()) {
+            etat = pair.getKey();
+            value = pair.getValue();
+            listAction = this.mdp.getActionsPossibles(etat);
 
-	public HashMap<Etat,Double> getV() {
-		return V;
-	}
-	public double getGamma() {
-		return gamma;
-	}
-	@Override
-	public void setGamma(double _g){
-		System.out.println("gamma= "+gamma);
-		this.gamma = _g;
-	}
+            for (Action action : listAction) {
+                valueTmp = 0.0;
+                try {
+                    listTransition = this.mdp.getEtatTransitionProba(etat, action);
+                    for (Map.Entry<Etat, Double> pairr : listTransition.entrySet()) {
+                        etatSuivant = pairr.getKey();
+                        proba = pairr.getValue();
+                        valueTmp += proba * (this.mdp.getRecompense(etat, action, etatSuivant) + gamma * this.V.get(etatSuivant));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if (valueTmp > value) {
+                    oldValue = value;
+                    value = valueTmp;
+                    deltaTmp = value - oldValue;
+                    if (deltaTmp > delta) delta = deltaTmp;
+                }
+            }
+        }
+
+        //mise a jour de vmax et vmin utilise pour affichage du gradient de couleur:
+        //vmax est la valeur max de V pour tout s
+        //vmin est la valeur min de V pour tout s
+        // ...
+
+        //******************* laisser cette notification a la fin de la methode
+        this.notifyObs();
+    }
+
+
+    /**
+     * renvoi l'action executee par l'agent dans l'etat e
+     * Si aucune actions possibles, renvoi Action2D.NONE
+     */
+    @Override
+    public Action getAction(Etat e) {
+        //TODO
+        return Action2D.NONE;
+    }
+
+    @Override
+    public double getValeur(Etat _e) {
+        //Renvoie la valeur de l'Etat _e, c'est juste un getter, ne calcule pas la valeur ici
+        //(la valeur est calculee dans updateV
+        //TODO
+        return 0.0;
+    }
+
+    /**
+     * renvoi action(s) de plus forte(s) valeur(s) dans etat
+     * (plusieurs actions sont renvoyees si valeurs identiques, liste vide si aucune action n'est possible)
+     */
+    @Override
+    public List<Action> getPolitique(Etat _e) {
+        //TODO
+
+        // retourne action de meilleure valeur dans _e selon V,
+        // retourne liste vide si aucune action legale (etat absorbant)
+        List<Action> returnactions = new ArrayList<Action>();
+
+        return returnactions;
+    }
+
+    @Override
+    public void reset() {
+        super.reset();
+        //reinitialise les valeurs de V
+        //TODO
+        this.notifyObs();
+    }
+
+    public HashMap<Etat, Double> getV() {
+        return V;
+    }
+
+    public double getGamma() {
+        return gamma;
+    }
+
+    @Override
+    public void setGamma(double _g) {
+        System.out.println("gamma= " + gamma);
+        this.gamma = _g;
+    }
 
 }

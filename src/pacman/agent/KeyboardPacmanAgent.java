@@ -1,7 +1,6 @@
 package pacman.agent;
 
 
-
 import pacman.elements.AgentPacman;
 import pacman.elements.ActionPacman;
 import pacman.elements.StateAgentPacman;
@@ -10,38 +9,36 @@ import pacman.graphics.GamePacmanPanel;
 
 /**
  * Renvoi l'action decide au clavier (dans GamePacmanPanel:setKeyListener)
- * @author lmatignon
  *
+ * @author lmatignon
  */
-public class KeyboardPacmanAgent  implements AgentPacman {
-	GamePacmanPanel panel;
-	
-	public KeyboardPacmanAgent(){
+public class KeyboardPacmanAgent implements AgentPacman {
+    GamePacmanPanel panel;
 
-	}
-	
-	public KeyboardPacmanAgent(GamePacmanPanel _panel){
-		panel = _panel;
-		this.setPanel(panel);
-	}
-	
-	
-	
-	public GamePacmanPanel getPanel() {
-		return panel;
-	}
+    public KeyboardPacmanAgent() {
 
-	public void setPanel(GamePacmanPanel panel) {
-		System.out.println("seetpanel");
-		this.panel = panel;
-		this.panel.setKeyListener();
-	}
+    }
 
-	@Override
-	public ActionPacman getAction(StateAgentPacman as, StateGamePacman state) {
-		return panel.actionKeyboard;
-	}
+    public KeyboardPacmanAgent(GamePacmanPanel _panel) {
+        panel = _panel;
+        this.setPanel(panel);
+    }
 
-	
+
+    public GamePacmanPanel getPanel() {
+        return panel;
+    }
+
+    public void setPanel(GamePacmanPanel panel) {
+        System.out.println("seetpanel");
+        this.panel = panel;
+        this.panel.setKeyListener();
+    }
+
+    @Override
+    public ActionPacman getAction(StateAgentPacman as, StateGamePacman state) {
+        return panel.actionKeyboard;
+    }
+
 
 }
