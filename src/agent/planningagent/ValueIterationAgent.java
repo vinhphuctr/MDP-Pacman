@@ -2,13 +2,8 @@ package agent.planningagent;
 
 import java.util.*;
 
+import environnement.*;
 import util.HashMapUtil;
-
-import environnement.Action;
-import environnement.Etat;
-import environnement.IllegalActionException;
-import environnement.MDP;
-import environnement.Action2D;
 
 
 /**
@@ -58,23 +53,19 @@ public class ValueIterationAgent extends PlanningValueAgent {
         //lorsque delta < epsilon
         //Dans cette classe, il  faut juste mettre a jour delta
         this.delta = 0.0;
-        List<Action> listAction;
-        Map<Etat, Double> listTransition;
         Etat etat, etatSuivant;
-        Double value, valueTmp, proba, oldValue, deltaTmp;
+        Double value, valueTmp, proba, oldValue;
 
-        for (Map.Entry<Etat, Double> pair : this.V.entrySet()) {
-            etat = pair.getKey();
-            value = pair.getValue();
-            listAction = this.mdp.getActionsPossibles(etat);
+        for (Map.Entry<Etat, Double> pairV : this.V.entrySet()) {
+            etat = pairV.getKey();
+            value = pairV.getValue();
 
-            for (Action action : listAction) {
+            for (Action action : this.mdp.getActionsPossibles(etat)) {
                 valueTmp = 0.0;
                 try {
-                    listTransition = this.mdp.getEtatTransitionProba(etat, action);
-                    for (Map.Entry<Etat, Double> pairr : listTransition.entrySet()) {
-                        etatSuivant = pairr.getKey();
-                        proba = pairr.getValue();
+                    for (Map.Entry<Etat, Double> pair : this.mdp.getEtatTransitionProba(etat, action).entrySet()) {
+                        etatSuivant = pair.getKey();
+                        proba = pair.getValue();
                         valueTmp += proba * (this.mdp.getRecompense(etat, action, etatSuivant) + gamma * this.V.get(etatSuivant));
                     }
                 } catch (Exception e) {
@@ -83,8 +74,8 @@ public class ValueIterationAgent extends PlanningValueAgent {
                 if (valueTmp > value) {
                     oldValue = value;
                     value = valueTmp;
-                    deltaTmp = value - oldValue;
-                    if (deltaTmp > delta) delta = deltaTmp;
+                    this.V.put(etat, value);
+                    if (value - oldValue > delta) delta = value - oldValue;
                 }
             }
         }
@@ -93,6 +84,10 @@ public class ValueIterationAgent extends PlanningValueAgent {
         //vmax est la valeur max de V pour tout s
         //vmin est la valeur min de V pour tout s
         // ...
+        this.vmax = this.V.entrySet().stream().max((entry1, entry2) ->
+                entry1.getValue() > entry2.getValue() ? 1 : -1).get().getValue();
+        this.vmin = this.V.entrySet().stream().min((entry1, entry2) ->
+                entry1.getValue() > entry2.getValue() ? 1 : -1).get().getValue();
 
         //******************* laisser cette notification a la fin de la methode
         this.notifyObs();
@@ -105,16 +100,22 @@ public class ValueIterationAgent extends PlanningValueAgent {
      */
     @Override
     public Action getAction(Etat e) {
-        //TODO
-        return Action2D.NONE;
+        List<Action> actions = getPolitique(e);
+        if(actions.isEmpty()) return Action2D.NONE;
+        // Si plus d'une action est possible, alors on en choisit une aléatoirement
+        else if (actions.size() > 1) {
+            Random r = new Random();
+            return actions.get(r.nextInt(actions.size()));
+        } else {
+            return actions.get(0);
+        }
     }
 
     @Override
     public double getValeur(Etat _e) {
         //Renvoie la valeur de l'Etat _e, c'est juste un getter, ne calcule pas la valeur ici
-        //(la valeur est calculee dans updateV
-        //TODO
-        return 0.0;
+        //(la valeur est calculee dans updateV)
+        return this.V.get(_e);
     }
 
     /**
@@ -123,20 +124,48 @@ public class ValueIterationAgent extends PlanningValueAgent {
      */
     @Override
     public List<Action> getPolitique(Etat _e) {
-        //TODO
-
         // retourne action de meilleure valeur dans _e selon V,
         // retourne liste vide si aucune action legale (etat absorbant)
-        List<Action> returnactions = new ArrayList<Action>();
+        List<Action> returnActions = new ArrayList<Action>();
+        if(this.mdp.estAbsorbant(_e)) return returnActions;
 
-        return returnactions;
+        Etat etatSuivant = null;
+        Double value, valueMax = 0.0;
+        // On parcourt toutes les actions possibles à partir de l'état _e
+        for (Action action : this.mdp.getActionsPossibles(_e)) {
+            try {
+                // On récupère l'etatSuivant qui est l'état donné par l'action
+                etatSuivant = this.mdp.getEtatTransitionProba(_e, action).entrySet().stream().max((entry1, entry2) ->
+                        entry1.getValue() > entry2.getValue() ? 1 : -1).get().getKey();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            // Si l'action mène à la récompense max, on renvoie cette action
+            if (this.mdp.getRecompense(_e, action, etatSuivant) == this.mdp.getRecompenseMax()) {
+                returnActions.clear();
+                returnActions.add(action);
+                return returnActions;
+            }
+            // On récupère la valeur de cette état
+            value = this.V.get(etatSuivant);
+            // On compare cette valeur à la valueMax, pour ajouter ou non l'action
+            // dans la liste d'actions possibles.
+            if (value > valueMax) {
+                returnActions.clear();
+                returnActions.add(action);
+                valueMax = value;
+            } else if (value.equals(valueMax)) {
+                returnActions.add(action);
+            }
+        }
+        return returnActions;
     }
 
     @Override
     public void reset() {
         super.reset();
         //reinitialise les valeurs de V
-        //TODO
+        this.V.forEach((k,v) -> this.V.put(k, 0.0));
         this.notifyObs();
     }
 

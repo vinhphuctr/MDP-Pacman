@@ -3,6 +3,7 @@ package agent.rlapproxagent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import agent.rlagent.QLearningAgent;
 import agent.rlagent.RLAgent;
@@ -18,17 +19,27 @@ import environnement.Etat;
  */
 public class QLApproxAgent extends QLearningAgent {
 
+    private FeatureFunction featureFunction;
+    private double[] poids;
+
     public QLApproxAgent(double alpha, double gamma, Environnement _env, FeatureFunction _featurefunction) {
         super(alpha, gamma, _env);
-        //TODO
+        this.featureFunction = _featurefunction;
+        this.poids = new double[_featurefunction.getFeatureNb()];
 
+        for(int i = 0; i < poids.length; i++) {
+            poids[i] = 0.0;
+        }
     }
 
 
     @Override
     public double getQValeur(Etat e, Action a) {
-        //TODO
-        return 0.0;
+        double[] features = featureFunction.getFeatures(e, a);
+        double result = 0.0;
+        for(int i = 0; i < features.length; i++) result += poids[i] * features[i];
+
+        return result;
 
     }
 
@@ -41,7 +52,13 @@ public class QLApproxAgent extends QLearningAgent {
         //inutile de verifier si e etat absorbant car dans runEpisode et threadepisode
         //arrete episode lq etat courant absorbant
 
-        //TODO
+        Double max = 0.0;
+
+        for(Action action : this.env.getActionsPossibles(esuivant))
+            if (this.getQValeur(esuivant, action) > max) max = this.getQValeur(esuivant, action);
+
+        for(int i = 0; i < poids.length; i++)
+            poids[i] = poids[i] + alpha * (reward + (gamma * max) - this.getQValeur(e, a)) * featureFunction.getFeatures(e, a)[i];
 
 
     }
@@ -51,7 +68,9 @@ public class QLApproxAgent extends QLearningAgent {
         super.reset();
         this.qvaleurs.clear();
 
-        //TODO
+        for(int i = 0; i < poids.length; i++) {
+            poids[i] = 0.0;
+        }
 
         this.episodeNb = 0;
         this.notifyObs();

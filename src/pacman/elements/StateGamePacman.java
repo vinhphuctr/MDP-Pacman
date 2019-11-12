@@ -1,10 +1,10 @@
 package pacman.elements;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import environnement.Etat;
 import javafx.util.Pair;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Cette classe decrit un etat complet du jeu pacman (non modifiable)
@@ -34,8 +34,8 @@ import javafx.util.Pair;
  *
  * @author lmatignon
  */
-public class StateGamePacman implements Etat//TODO verifier hashcode, equals et clone
-{
+public class StateGamePacman implements Etat {
+    //TODO verifier hashcode, equals et clone
     public static int TIMEPACMANSCARRED = 20;
     public static int TIMEGHOSTSCARRED = 20;
     /**

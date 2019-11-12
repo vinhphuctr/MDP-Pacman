@@ -19,9 +19,7 @@ public class FeatureFunctionPacman implements FeatureFunction {
     //--> doit etre coherent avec EnvironnementPacmanRL::getActionsPossibles
 
 
-    public FeatureFunctionPacman() {
-
-    }
+    public FeatureFunctionPacman() { }
 
     @Override
     public int getFeatureNb() {
@@ -44,15 +42,36 @@ public class FeatureFunctionPacman implements FeatureFunction {
 
         StateAgentPacman pacmanstate_next = stategamepacman.movePacmanSimu(0, new ActionPacman(a.ordinal()));
 
-        //TODO
-
+        vfeatures[0] = 1;
+        // ---------------
+        vfeatures[1] = 0;
+        int[][] positions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+        int x, y;
+        StateAgentPacman agent;
+        ActionPacman action = new ActionPacman(a.ordinal());
+        StateAgentPacman pacman = stategamepacman.movePacmanSimu(0, action);
+        for(int i = 0; i < stategamepacman.getNumberOfGhosts(); i++) {
+            agent = stategamepacman.getGhostState(i);
+            for (int[] pos : positions) {
+                x = agent.getX() + pos[0];
+                y = agent.getY() + pos[1];
+                if(pacman.getX() == x && pacman.getY() == y) vfeatures[1]++;
+            }
+        }
+        // ---------------
+        if(stategamepacman.getMaze().isFood(pacman.getX(), pacman.getY()))
+            vfeatures[2] = 1;
+        else
+            vfeatures[2] = 0;
+        // ---------------
+        int size = stategamepacman.getMaze().getSizeX() * stategamepacman.getMaze().getSizeY();
+        vfeatures[3] = stategamepacman.getClosestDot(pacman) / size;
 
         return vfeatures;
     }
 
     public void reset() {
         vfeatures = new double[4];
-
     }
 
 }

@@ -78,7 +78,7 @@ public abstract class RLAgent extends ValueAgent implements IRLAgent, Observer {
         this.stratExplorationGreedy = new StrategyGreedy(this, 0.1);
         //	RLAgent.stratExplorationGreedy.setAgent(this);
 
-        this.stratExplorationCourante = stratExplorationManuel;
+        this.stratExplorationCourante = stratExplorationGreedy;
 
         this.env = _env;
         this.env.addObserver(this);

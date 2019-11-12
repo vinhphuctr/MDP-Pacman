@@ -17,23 +17,24 @@ import javafx.util.Pair;
  * @author laetitiamatignon
  */
 public class FeatureFunctionIdentity implements FeatureFunction {
-    //TODO
+
+    private double[] matrix;
 
     public FeatureFunctionIdentity(int _nbEtat, int _nbAction) {
-        //TODO
+        for(int i = 0; i < _nbEtat * _nbEtat; i++) {
+            if(i == 4) matrix[i] = 1;
+            else matrix[i] = 0;
+        }
     }
 
     @Override
     public int getFeatureNb() {
-        //TODO
-        return 0;
+        return matrix.length;
     }
 
     @Override
     public double[] getFeatures(Etat e, Action a) {
-        //TODO
-
-        return null;
+        return matrix;
     }
 
 

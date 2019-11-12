@@ -30,11 +30,11 @@ public class testRLPacman extends Application {
     /**
      * type de labyrinthe pour le jeu de pacman
      */
-    static String mazename = "pacmanlayouts/smallGrid.lay";//smallGrid smallGrid2 mediumGrid
+    static String mazename = "pacmanlayouts/mediumGrid.lay";//smallGrid smallGrid2 mediumGrid
 
     // parametres RL*/
     static double gamma = 0.8;
-    static double alpha = 0.1;
+    static double alpha = 0.2;
     static double _epsilon = 0.05;
 
     // parametres experience a lancer, un episode = une partie */
@@ -82,8 +82,8 @@ public class testRLPacman extends Application {
 
     private static void setRLAgent() {
         //QLearning tabulaire classique
-        pacmanmdp = new EnvironnementPacmanMDPClassic(mazename, true);
-        rlagent = new QLearningAgent(alpha, gamma, pacmanmdp);
+        //pacmanmdp = new EnvironnementPacmanMDPClassic(mazename, true);
+        //rlagent = new QLearningAgent(alpha, gamma, pacmanmdp);
 
         //Qlearning avec fonctions caracteristiques identite
 	/*	pacmanmdp = new EnvironnementPacmanMDPClassic(mazename,true);
@@ -93,10 +93,10 @@ public class testRLPacman extends Application {
 		rlagent = new QLApproxAgent(alpha,gamma,pacmanmdp,featurefunction);
 */
         //QLearning avec approximation lineaire
-	/*	pacmanmdp = new EnvironnementPacmanFeatureRL(mazename,true);//smallGrid smallGrid2 mediumGrid
+		pacmanmdp = new EnvironnementPacmanFeatureRL(mazename,true); //smallGrid smallGrid2 mediumGrid
 		FeatureFunction featurefunction2 = new FeatureFunctionPacman();
 		rlagent = new QLApproxAgent(alpha,gamma,pacmanmdp,featurefunction2);
-*/
+
 
     }
 
@@ -185,7 +185,9 @@ public class testRLPacman extends Application {
         //testPacmanClassicRL.testCalculQValeur();
 
         testRLPacman.common();
+        System.out.println(testRLPacman.rlagent);
         testRLPacman.apprentissage();
+
 
 
         if (DISPLAYCHART) {

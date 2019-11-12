@@ -44,7 +44,7 @@ public class AgentRandom extends PlanningValueAgent {
 
     @Override
     public void setGamma(double parseDouble) {
-        // TODO Auto-generated method stub
+        //  Auto-generated method stub
     }
 
 }

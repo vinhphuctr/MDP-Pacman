@@ -1,11 +1,10 @@
 package agent.rlagent;
 
-import java.util.*;
-
-import javafx.util.Pair;
 import environnement.Action;
 import environnement.Environnement;
 import environnement.Etat;
+
+import java.util.*;
 
 import static java.util.stream.Collectors.toMap;
 
@@ -19,19 +18,16 @@ public class QLearningAgent extends RLAgent {
      * format de memorisation des Q valeurs: utiliser partout setQValeur car cette methode notifie la vue
      */
     protected HashMap<Etat, HashMap<Action, Double>> qvaleurs;
-    //AU CHOIX: vous pouvez utiliser une Map avec des Pair pour clés si vous préférez
-    //protected HashMap<Pair<Etat,Action>,Double> qvaleurs;
-
 
     /**
      * @param alpha
      * @param gamma
-     * @param Environnement
+     * @param _env
      */
     public QLearningAgent(double alpha, double gamma,
                           Environnement _env) {
         super(alpha, gamma, _env);
-        qvaleurs = new HashMap<Etat, HashMap<Action, Double>>();
+        qvaleurs = new HashMap<>();
     }
 
     /**
@@ -49,54 +45,66 @@ public class QLearningAgent extends RLAgent {
             return new ArrayList<Action>();
         }
 
-        Map<Action, Double> mapQValue = new HashMap<>();
-        for (Action a : this.getActionsLegales(e)) {
-            mapQValue.put(a, getQValeur(e, a));
+        double valeur = this.getValeur(e);
+        for(Action action : this.getActionsLegales(e)) {
+            if (getQValeur(e, action) == valeur) returnactions.add(action);
         }
 
-        Map<Action, Double> sorted = mapQValue
-                .entrySet()
-                .stream()
-                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
-                .collect(
-                        toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
-                                LinkedHashMap::new));
-
-
-        double maxValue;
-        for (Map.Entry<Action, Double> entry : sorted.entrySet()) {
-            maxValue = entry.getValue();
-            if (maxValue == entry.getValue()) returnactions.add(entry.getKey());
-        }
 
         return returnactions;
-
-
     }
 
     @Override
     public double getValeur(Etat e) {
-        //TODO
-        return 0.0;
-
+        double value = Integer.MIN_VALUE;
+        if(!qvaleurs.containsKey(e)) {
+            qvaleurs.put(e, new HashMap<>());
+            for(Action a : this.getActionsLegales(e)) {
+                setQValeur(e, a, 0.0);
+            }
+            return 0.0;
+        } else {
+            for(Action a : this.qvaleurs.get(e).keySet()) {
+                if(this.getQValeur(e, a) > value) {
+                    value = this.getQValeur(e, a);
+                }
+            }
+        }
+        return value;
     }
 
     @Override
     public double getQValeur(Etat e, Action a) {
-        return qvaleurs.get(e).get(a);
+        double value = 0.0;
+        if (qvaleurs.containsKey(e)) {
+            if (qvaleurs.get(e).containsKey(a)) {
+                value = qvaleurs.get(e).get(a);
+            } else {
+                qvaleurs.get(e).put(a, value);
+            }
+        } else {
+            qvaleurs.put(e, new HashMap<>());
+            qvaleurs.get(e).put(a, value);
+        }
+        return value;
     }
 
 
     @Override
     public void setQValeur(Etat e, Action a, double d) {
-        //double qvalue =  (1 - alpha)*(getQValeur(e, a)) + alpha * (d + gamma);
-        qvaleurs.get(e).replace(a, d);
-
+        if (qvaleurs.containsKey(e)) {
+            qvaleurs.get(e).put(a, d);
+        } else {
+            qvaleurs.put(e, new HashMap<>());
+            qvaleurs.get(e).put(a, d);
+        }
 
         // mise a jour vmax et vmin pour affichage du gradient de couleur:
         //vmax est la valeur de max pour tout s de V
         //vmin est la valeur de min pour tout s de V
         // ...
+        if (d > vmax) vmax = d;
+        if (d < vmin) vmin = d;
 
         this.notifyObs();
 
@@ -117,8 +125,12 @@ public class QLearningAgent extends RLAgent {
         if (RLAgent.DISPRL)
             System.out.println("QL mise a jour etat " + e + " action " + a + " etat' " + esuivant + " r " + reward);
 
-        double qvalue = (1 - alpha) * (getQValeur(e, a)) + alpha * (reward + gamma * getQValeur(esuivant, getPolitique(esuivant).get(0)));
-        setQValeur(e, a, qvalue);
+        double old_estim = this.getQValeur(e, a);
+        double new_echantillon = reward + this.gamma * this.getValeur(esuivant);
+        double value = (1 - this.alpha) * old_estim + this.alpha * new_echantillon;
+        this.setQValeur(e, a, value);
+
+
     }
 
     @Override
@@ -130,7 +142,12 @@ public class QLearningAgent extends RLAgent {
     @Override
     public void reset() {
         super.reset();
-        // TODO
+
+        for (Map.Entry<Etat, HashMap<Action, Double>> etats : qvaleurs.entrySet()) {
+            for (Map.Entry<Action, Double> actions : etats.getValue().entrySet()) {
+                qvaleurs.get(etats.getKey()).put(actions.getKey(), 0.0);
+            }
+        }
 
         this.episodeNb = 0;
         this.notifyObs();

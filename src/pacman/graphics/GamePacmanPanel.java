@@ -269,7 +269,7 @@ public class GamePacmanPanel extends JPanel implements Observer { //GameObserver
 			try {
 				Thread.sleep(timestep);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+				// Auto-generated catch block
 				e.printStackTrace();
 			}
 	}*/
@@ -360,7 +360,7 @@ public class GamePacmanPanel extends JPanel implements Observer { //GameObserver
                 try {
                     Thread.sleep(timestep);
                 } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
+                    // Auto-generated catch block
                     e.printStackTrace();
                 }
         }

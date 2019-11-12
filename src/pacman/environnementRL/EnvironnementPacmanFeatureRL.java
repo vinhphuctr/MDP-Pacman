@@ -46,7 +46,7 @@ public class EnvironnementPacmanFeatureRL extends EnvironnementPacmanRL {
             }
 
         } catch (MazeException e) {
-            // TODO Auto-generated catch block
+            //Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -88,7 +88,7 @@ public class EnvironnementPacmanFeatureRL extends EnvironnementPacmanRL {
             //creation du jeu
             gamepacman.setState((StateGamePacman) etatcourant);
         } catch (MazeException e) {
-            // TODO Auto-generated catch block
+            // Auto-generated catch block
             e.printStackTrace();
         }
 

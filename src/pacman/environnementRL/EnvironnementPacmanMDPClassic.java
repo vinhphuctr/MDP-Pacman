@@ -33,25 +33,20 @@ public class EnvironnementPacmanMDPClassic extends EnvironnementPacmanRL {
                     gamepacman.addGhostAgent(new RandomPacmanAgent());
                 else
                     gamepacman.addGhostAgent(new GoPacmanAgent(Action2D.NONE));
-
             }
 
             this.etatcourant = new EtatPacmanMDPClassic(gamepacman.getState());
         } catch (MazeException e) {
-            // TODO Auto-generated catch block
+            // Auto-generated catch block
             e.printStackTrace();
         }
 
-
     }
-
 
     @Override
     public void setEtatCourant(Etat e) {
         this.etatcourant = (EtatPacmanMDPClassic) e;
-
     }
-
 
     @Override
     public Etat doAction(Action _a) {
@@ -60,10 +55,11 @@ public class EnvironnementPacmanMDPClassic extends EnvironnementPacmanRL {
         int old_score = this.gamepacman.getState().getScore();
         /** In one step, move pacman or ghost and update score**/
         this.gamepacman.oneIteration(new ActionPacman(_a.ordinal()));
-        ;//bouge pacman avec _a puis fantomes
+        //bouge pacman avec _a puis fantomes
 
         EtatPacmanMDPClassic emdp = new EtatPacmanMDPClassic(gamepacman.getState());
         this.setEtatCourant(emdp);
+        //System.out.println(emdp.hashCode());
         int new_score = this.gamepacman.getState().getScore();
         double rwd = new_score - old_score;
 
@@ -76,16 +72,16 @@ public class EnvironnementPacmanMDPClassic extends EnvironnementPacmanRL {
     }
 
     @Override
-    public void reset() {//reset seulement le labyrinthe et etat initial des agents : fantomes identiques
+    public void reset() {
+        //reset seulement le labyrinthe et etat initial des agents : fantomes identiques
         StateGamePacman gamestate;
         try {
             gamestate = new StateGamePacman(new MazePacman(filename));
-
             //creation du jeu
             gamepacman.setState(gamestate);
             this.etatcourant = new EtatPacmanMDPClassic(gamepacman.getState());
         } catch (MazeException e) {
-            // TODO Auto-generated catch block
+            // Auto-generated catch block
             e.printStackTrace();
         }
     }
